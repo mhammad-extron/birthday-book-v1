@@ -201,7 +201,6 @@ def add_new_birthday():
     last_name = pyip.inputStr('*Last Name: ').capitalize()
     age_turning = pyip.inputStr('*Age Turning: ')
     next_birthday = pyip.inputStr('*Birthday: ').capitalize()
-    category = pyip.inputStr('*Category: ').capitalize()
     user_input = user_response('*Choose category: 1. Friends, \
 2. Favourites, 3. Family or 4. General: ', 1, 4)
     if user_input == 1:
