@@ -101,6 +101,17 @@ def print_records(records, function=None):
     for record in records:
         print_records_in_loop(record)
 
+# def print_records_in_loop(record):
+#     """
+#     Function to loop through all records passed
+#     as a parameter and print the details in a
+#     list of key: values.
+#     """
+#     print("Printing record...")
+#     for key, value in record.items():
+#         print(f"{key}: {value}")
+#     print("\n")
+
 def print_records_in_loop(record):
     """
     Function to loop through all records passed
@@ -109,6 +120,11 @@ def print_records_in_loop(record):
     """
     print("Printing record...")
     for key, value in record.items():
+        if key == 'phone_number':
+            # Ensures 0 is added to the front of the number
+            value1 = str(value).zfill(11)
+            print(f"{key}: {value1}")
+        else:
             print(f"{key}: {value}")
     print("\n")
 
@@ -273,7 +289,7 @@ def search_birthday():
             another_task()
         return False  
 
-def edit_contact_from_menu():
+def edit_birthday_from_menu():
     """
     Function to edit contact from the
     main menu. The user will need to search for
@@ -291,7 +307,7 @@ def add_new_birthday():
     """
     Function allows user to add new birthday entry data
     """
-    print('\nTo add a new Birthday please enter the details below.\n\
+    print('\nTo add a new Birthday please e  nter the details below.\n\
 \nAll fields with a * are required.\n\
 \nType NA for any fields you wish to leave blank.\n')
     first_name = pyip.inputStr('*First Name: ').capitalize()
@@ -337,7 +353,7 @@ def delete(birthday, index):
     birthday_id = str(birthday[index])
     birthday_row = BIRTHDAY_WORKSHEET.find(birthday_id)
     row_number = birthday_row.row
-    user_input = pyip.inputYesNo('\nAre you sure you want to delete this contact? (Y/N): ')
+    user_input = pyip.inputYesNo('\nAre you sure you want to delete this birthday? (Y/N): ')
     if user_input == 'yes':
         print(f'\n{birthday} now being deleted...\n')
         BIRTHDAY_WORKSHEET.delete_rows(row_number)
@@ -390,6 +406,12 @@ def edit_exisiting_birthday(birthday):
         pass
     else:
         another_task()
+    user_input = pyip.inputYesNo(
+        "\nWould you like to edit another field? (Y/N): ")
+    if user_input == 'yes':
+        edit_existing_birthday(birthday)
+    else:
+        another_task()
 
 def run_programme():
     """
@@ -403,8 +425,6 @@ def run_programme():
 - To restart the programme, press the "Run Programme" at the top.')
     print('\nmain menu...\n')
     main_menu_()
-
-
 
 run_programme()
   
