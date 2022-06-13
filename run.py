@@ -136,7 +136,7 @@ def save_to_worksheet(info):
         )
     if user_input == 'yes':
         print('\nYou will now be taken to edit this contact...\n')
-        edit_existing_contact(info)
+        edit_exisiting_birthday(info)
     else:
         another_task()
 
@@ -148,7 +148,7 @@ def birthday_id_creation():
     """
     all_values = BIRTHDAY_WORKSHEET.get_all_values()
     previous_row = all_values[-1]
-    previous_birthday_id = int(previous_row[6])
+    previous_birthday_id = int(previous_row[5])
     new_birthday_id = str(previous_birthday_id + 1)
     return new_birthday_id
 
@@ -161,7 +161,7 @@ def convert_to_list_action(option, action):
     values = option.values()
     values_list = list(values)
     if action == 'edit':
-        print('edit_existing_contact')
+        edit_exisiting_birthday(values_list)
     elif action == 'delete':
         print('delete')
     else:
@@ -201,12 +201,80 @@ def add_new_birthday():
     last_name = pyip.inputStr('*Last Name: ').capitalize()
     age_turning = pyip.inputStr('*Age Turning: ')
     next_birthday = pyip.inputStr('*Birthday: ').capitalize()
+    category = pyip.inputStr('*Category: ').capitalize()
+    user_input = user_response('*Choose category: 1. Friends, \
+2. Favourites, 3. Family or 4. General: ', 1, 4)
+    if user_input == 1:
+        category = 'Friends'
+    elif user_input == 2:
+        category = 'Favourites'
+    elif user_input == 3:
+        category = 'Family'
+    else:
+        category = 'General'
+    birthday_id = birthday_id_creation()
     new_birthday_entry = [
         first_name, last_name, age_turning,
-        next_birthday
+        next_birthday, category, birthday_id
         ]
     print(new_birthday_entry)
     save_to_worksheet(new_birthday_entry)
+
+def edit(birthday, cell_index, info_type):
+    """
+    Allows user to update cells by adding new entry
+    """
+    # Converts to a string first to allow any integers to be searched for.
+    cell = BIRTHDAY_WORKSHEET.find(birthday[cell_index])
+    new_value = pyip.inputStr(f'Enter new {info_type}:').capitalize()
+    birthday[cell_index] = new_value
+    print(f'{info_type} now being updated...\n')
+    update_worksheet(cell.row, cell.col, new_value)
+
+
+def edit_exisiting_birthday(birthday):
+    """
+    Allows user to edit exisisting birthday entry 
+    by individual input fields
+    """
+    print(birthday)
+    print('\nWhich feild would you like to edit?\n 1. First Name\n 2. Last Name\n 3. Age Turning\n 4. Next Birthday\n 5. Category\n 6. Exit')
+    user_input = user_response("\n Please enter an option number: ", 1, 7)
+    if user_input == 1:
+        edit(birthday, 0, 'first name')
+        print(birthday)
+        pass
+    elif user_input == 2:
+        edit(birthday, 1, 'last name')
+        print(birthday)
+        pass
+    elif user_input == 3:
+        edit(birthday, 2, 'age turning')
+        print(birthday)
+        pass
+    elif user_input == 4:
+        edit(birthday, 3, 'next birthday')
+        print(birthday)
+        pass
+    elif user_input == 5:
+        cell = BIRTHDAY_WORKSHEET.find(birthday[4])
+        user_input = user_response('*Choose category: 1. Friends, \
+2. Favourites, 3. Family or 4. General: ', 1, 4)
+        if user_input == 1:
+            new_value = 'Friends'
+        elif user_input == 2:
+            new_value = 'Favourites'
+        elif user_input == 3:
+            new_value = 'Family'
+        else:
+            new_value = 'General'
+        birthday[4] = new_value
+        print('\nCategory now being updated...\n')
+        update_worksheet(cell.row, cell.col, new_value)
+        print(birthday)
+        pass
+    else:
+        another_task()
 
 def run_programme():
     """
