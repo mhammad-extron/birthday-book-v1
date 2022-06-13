@@ -39,13 +39,13 @@ def main_menu_():
             "\nPlease enter a number from the above options: ", 1, 4
             )
         if user_input == 1:
-            print("search birthday")
+            search_birthday()
             break
         elif user_input == 2:
             add_new_birthday()
             break
         elif user_input == 3:
-            print("edit_birthday_from_menu")
+            edit_birthday_from_menu()
             break
         else:
             retrieve_all_birthdays()
@@ -189,6 +189,103 @@ def select_from_multiple_records(birthdays):
         0, len(birthdays))
     return birthdays[user_input]
 
+def search(info_type):
+    """
+    Returns a result based on user input and info type selected
+    """
+    if info_type == 'category':
+        user_input = user_response('*Choose category to search by: 1. Friends, \
+2. Favourites, 3. Family or 4. General: ', 1, 4)
+        if user_input == 1:
+            category = "Freinds"
+        elif user_input == 2:
+            category = "Favourites"
+        elif user_input == 3:
+            category = "Family"
+        else:
+            category = "General"
+        search_by = category
+    else:
+        search_by = pyip.inputStr(f'\nEnter {info_type}: ').capitalize()
+    # Filter function used to search within the worksheet
+    result = list(filter(
+        lambda record: record[info_type] == search_by or
+        search_by in record[info_type], retrieve_records()
+        ))
+    # If there are any results found
+    if len(result) != 0:
+        print("\nBirthday found\n")
+        print_records(result)
+        print('1. Edit contact(s)\n2. Delete contact(s)\n\
+3. Back to main menu\n')
+        user_input = user_response(
+            "\nPlease enter a number from the above options: ", 1, 3
+            )
+        """
+        If there is more than one contact returned
+        the user needs to be able to choose which
+        contact to edit or delete which is done using the
+        select_from_multiple_records function.
+        """
+        if user_input == 1:
+            # Edit
+            if len(result) == 1:
+                convert_to_list_action(result[0], 'edit')
+            elif len(result) > 1:
+                birthday_choice = select_from_multiple_records(result)
+                convert_to_list_action(birthday_choice, 'edit')
+        # Delete
+        elif user_input == 2:
+            if len(result) == 1:
+                convert_to_list_action(result[0], 'delete')
+            elif len(result) > 1:
+                birthday_choice = select_from_multiple_records(result)
+                convert_to_list_action(birthday_choice, 'delete')
+        else:
+            main_menu_()
+    else:
+        print("\nNo Birthday with that name found\n")
+        print('\nYou will now be taken back to search again...\n')
+        search_birthday()
+    
+
+def search_birthday():
+    """
+    Allows user to search for birthday entry by first name,
+    last name or category
+    """
+    print("\nSearch by...\n\
+1. By First name\n\
+2. By Last name\n\
+3. By Category\n\
+4. Exit\n")
+    while True:
+        user_input = user_response(
+            "\nPlease enter a number from the above options: ", 1, 4
+            )
+        if user_input == 1:
+            search('first_name')
+        elif user_input == 2:
+            search('last_name')
+        elif user_input == 3:
+            search('category')
+        else:
+            another_task()
+        return False  
+
+def edit_contact_from_menu():
+    """
+    Function to edit contact from the
+    main menu. The user will need to search for
+    the contact first.
+    """
+    print(
+        '\nIn order to edit a contact, \
+you will first need to search for them.\n'
+        )
+    print('\nTaking you to search now...\n')
+    search_birthday()  
+
 
 def add_new_birthday():
     """
@@ -229,6 +326,25 @@ def edit(birthday, cell_index, info_type):
     birthday[cell_index] = new_value
     print(f'{info_type} now being updated...\n')
     update_worksheet(cell.row, cell.col, new_value)
+
+def delete(birthday, index):
+    """
+    Retrieves cell index based upon search
+    and allows the user to update cell by
+    adding a new entry.
+    """
+    print(birthday)
+    birthday_id = str(birthday[index])
+    birthday_row = BIRTHDAY_WORKSHEET.find(birthday_id)
+    row_number = birthday_row.row
+    user_input = pyip.inputYesNo('\nAre you sure you want to delete this contact? (Y/N): ')
+    if user_input == 'yes':
+        print(f'\n{birthday} now being deleted...\n')
+        BIRTHDAY_WORKSHEET.delete_rows(row_number)
+        print('\nDeletion complete\n')
+        another_task()
+    else:
+        another_task()
 
 
 def edit_exisiting_birthday(birthday):
