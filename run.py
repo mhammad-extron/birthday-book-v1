@@ -409,7 +409,7 @@ def edit_exisiting_birthday(birthday):
     user_input = pyip.inputYesNo(
         "\nWould you like to edit another field? (Y/N): ")
     if user_input == 'yes':
-        edit_existing_birthday(birthday)
+        edit_exisiting_birthday(birthday)
     else:
         another_task()
 
