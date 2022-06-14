@@ -179,7 +179,7 @@ def convert_to_list_action(option, action):
     if action == 'edit':
         edit_exisiting_birthday(values_list)
     elif action == 'delete':
-        print('delete')
+        delete(values_list, 5)
     else:
         print('Invalid action has been defined.')
 
